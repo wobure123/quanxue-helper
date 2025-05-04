@@ -1,6 +1,9 @@
 # 劝学网助手（Quanxue Reader Helper）
 
 一个用于 www.quanxue.cn 网站的 Chrome 扩展，自动保存并同步你的阅读进度，支持多设备同步和本地缓存，提供便捷的悬浮窗历史记录管理。
+![image](https://github.com/user-attachments/assets/9226a232-af18-4c97-8895-f4384bdbb134)
+
+
 
 ## 功能特性
 - 自动检测并保存你在 www.quanxue.cn 书籍页面的阅读进度
