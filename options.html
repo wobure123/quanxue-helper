@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>全学网阅读助手设置</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="card">
+    <h2>Bmob 云端配置</h2>
+    <form id="bmob-form">
+      <label for="bmob-appid">Bmob AppId</label>
+      <input type="text" id="bmob-appid" placeholder="你的 Bmob AppId" required />
+      <label for="bmob-appkey">Bmob AppKey</label>
+      <input type="text" id="bmob-appkey" placeholder="你的 Bmob AppKey" required />
+      <div class="btn-row">
+        <button type="button" id="test-bmob">测试连接</button>
+        <button type="button" id="save-bmob">保存配置</button>
+      </div>
+      <div id="bmob-test-result"></div>
+    </form>
+  </div>
+  <div class="card">
+    <h2>账户登录/注册</h2>
+    <div id="user-info"></div>
+    <form id="login-form">
+      <input type="email" id="email" placeholder="邮箱" required />
+      <input type="password" id="password" placeholder="密码" required />
+      <button type="submit">登录</button>
+    </form>
+    <form id="register-form">
+      <input type="email" id="reg-email" placeholder="邮箱" required />
+      <input type="password" id="reg-password" placeholder="密码" required />
+      <button type="submit">注册</button>
+    </form>
+    <button id="logout-btn" style="display:none">登出</button>
+    <div id="message"></div>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>

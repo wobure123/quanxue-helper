@@ -1,0 +1,4 @@
+/* 基础样式，可后续补充 */
+body { font-family: sans-serif; min-width: 300px; }
+#history-list { list-style: none; padding: 0; }
+#history-list li { margin: 8px 0; border-bottom: 1px solid #eee; padding-bottom: 4px; }
