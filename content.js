@@ -66,7 +66,7 @@
         left: 0;
         top: 100%;
         z-index: 100;
-        background: #fff;
+        background: rgba(255,255,255,0.92);
         color: #222;
         border: 1px solid #2563eb;
         border-radius: 6px;
@@ -80,6 +80,8 @@
         word-break: break-all;
         line-height: 1.7;
         letter-spacing: 0.02em;
+        pointer-events: none;
+        user-select: none;
       }
       #qx-helper-panel li.qx-helper-last:hover .qx-helper-fulltext {
         top: auto;
@@ -88,8 +90,16 @@
       #qx-helper-panel li:hover .qx-helper-fulltext {
         display: block;
       }
+      #qx-helper-panel li.qx-helper-btn-hover .qx-helper-fulltext {
+        display: none !important;
+      }
+      #qx-helper-panel .qx-helper-btns {
+        display: flex;
+        gap: 8px;
+        margin-left: 16px;
+        flex-shrink: 0;
+      }
       #qx-helper-panel button {
-        margin-left: 0.5em;
         background: #2563eb;
         color: #fff;
         border: none;
@@ -164,17 +174,23 @@
           // 让最后一条li加特殊class，气泡向上弹出
           if (idx === data.length - 1) li.classList.add('qx-helper-last');
           const btns = document.createElement('span');
+          btns.className = 'qx-helper-btns';
+          btns.style.cssText = 'display:flex;gap:8px;margin-left:16px;flex-shrink:0;';
+          btns.onmouseenter = () => li.classList.add('qx-helper-btn-hover');
+          btns.onmouseleave = () => li.classList.remove('qx-helper-btn-hover');
           // 跳转按钮
           const navBtn = document.createElement('button');
+          navBtn.className = 'qx-helper-btn';
           navBtn.textContent = '前往';
-          navBtn.style.cssText = 'margin-left:8px;background:#2563eb;color:#fff;border:none;border-radius:4px;padding:2px 10px;cursor:pointer;';
+          navBtn.style.cssText = 'background:#2563eb;color:#fff;border:none;border-radius:4px;padding:2px 10px;cursor:pointer;';
           navBtn.onclick = () => {
             window.open(item.last_page_url, '_blank');
           };
           // 删除按钮
           const delBtn = document.createElement('button');
+          delBtn.className = 'qx-helper-btn';
           delBtn.textContent = '删除';
-          delBtn.style.cssText = 'margin-left:8px;background:#eee;color:#d00;border:none;border-radius:4px;padding:2px 10px;cursor:pointer;';
+          delBtn.style.cssText = 'background:#eee;color:#d00;border:none;border-radius:4px;padding:2px 10px;cursor:pointer;';
           delBtn.onclick = () => {
             // 删除时两处都同步
             chrome.storage.sync.get({ reading_history: [] }, (res) => {
