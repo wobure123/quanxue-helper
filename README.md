@@ -13,14 +13,16 @@
 - 支持多设备同步，无需第三方云服务
 
 ## 安装与使用
-1. 克隆或下载本项目到本地：
+1. 推荐：直接下载 [最新 release 的 zip 包](https://github.com/wobure123/quanxue-helper/releases)，解压后在 Chrome 扩展页面加载。
+   - 打开 Chrome，访问 `chrome://extensions/`，开启“开发者模式”
+   - 点击“加载已解压的扩展”，选择解压后的文件夹
+2. 或者，克隆或下载本项目到本地：
    ```bash
-   git clone https://github.com/你的用户名/quanxue-helper.git
+   git clone https://github.com/wobure123/quanxue-helper.git
    ```
-2. 打开 Chrome，访问 `chrome://extensions/`，开启“开发者模式”
-3. 点击“加载已解压的扩展”，选择本项目文件夹
-4. 访问 www.quanxue.cn 任意页面，右下角会出现“阅”悬浮按钮
-5. 点击悬浮按钮可查看、跳转、删除历史记录
+   然后同上，加载已解压的扩展。
+3. 访问 www.quanxue.cn 任意页面，右下角会出现“阅”悬浮按钮
+4. 点击悬浮按钮可查看、跳转、删除历史记录
 
 
 ## 隐私与安全
