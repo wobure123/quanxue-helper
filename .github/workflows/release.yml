@@ -1,0 +1,27 @@
+name: Release Extension
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up zip
+        run: sudo apt-get install zip
+
+      - name: Create zip package
+        run: |
+          zip -r quanxue-helper.zip . -x "*.git*" "*.github*" "*.DS_Store*"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: quanxue-helper.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
