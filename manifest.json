@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "劝学网助手",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "保存并同步您在 www.quanxue.cn 上的阅读进度。",
   "permissions": [
     "scripting",
