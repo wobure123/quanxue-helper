@@ -15,7 +15,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const navBtn = document.createElement('button');
       navBtn.textContent = '前往';
       navBtn.onclick = () => {
-        chrome.runtime.sendMessage({ type: 'NAVIGATE_TO', url: item.last_page_url });
+        // 拼接 scroll_y 到 URL
+        let url = item.last_page_url;
+        if (typeof item.scroll_y === 'number' && item.scroll_y > 0) {
+          if (url.indexOf('?') === -1) {
+            url += '?scroll_y=' + item.scroll_y;
+          } else {
+            url += '&scroll_y=' + item.scroll_y;
+          }
+        }
+        chrome.tabs.create({ url });
       };
       const delBtn = document.createElement('button');
       delBtn.textContent = '删除';

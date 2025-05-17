@@ -3,6 +3,33 @@
 // This file will be used to inject scripts into the page to extract reading information.
 
 (function() {
+  // ===== 自动恢复滚动位置（如 URL 带 scroll_y 参数） =====
+  function getScrollYFromUrl() {
+    // 支持 ?scroll_y=xxx 或 #scroll_y=xxx
+    const url = new URL(window.location.href);
+    let y = 0;
+    if (url.searchParams.has('scroll_y')) {
+      y = parseInt(url.searchParams.get('scroll_y'), 10) || 0;
+    } else if (window.location.hash.startsWith('#scroll_y=')) {
+      y = parseInt(window.location.hash.replace('#scroll_y=', ''), 10) || 0;
+    }
+    return y;
+  }
+  const scrollYToRestore = getScrollYFromUrl();
+  if (scrollYToRestore > 0) {
+    window.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        window.scrollTo(0, scrollYToRestore);
+      }, 400); // 延迟更久以确保内容渲染
+    });
+    // 再加一次兜底，页面完全加载后再滚动
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        window.scrollTo(0, scrollYToRestore);
+      }, 100);
+    });
+  }
+
   // ===== 悬浮窗入口按钮和面板（始终注入） =====
   if (!document.getElementById('qx-helper-fab')) {
     const fab = document.createElement('div');
@@ -184,7 +211,44 @@
           navBtn.textContent = '前往';
           navBtn.style.cssText = 'background:#2563eb;color:#fff;border:none;border-radius:4px;padding:2px 10px;cursor:pointer;';
           navBtn.onclick = () => {
-            window.open(item.last_page_url, '_blank');
+            // 用 search 参数传递 scroll_y
+            let url = item.last_page_url;
+            if (typeof item.scroll_y === 'number' && item.scroll_y > 0) {
+              if (url.indexOf('?') === -1) {
+                url += '?scroll_y=' + item.scroll_y;
+              } else {
+                url += '&scroll_y=' + item.scroll_y;
+              }
+            }
+            // 判断是否为当前页面（去除 scroll_y 参数后）
+            function getCleanUrlWithoutScrollY(u) {
+              try {
+                const _u = new URL(u, location.origin);
+                _u.searchParams.delete('scroll_y');
+                return _u.origin + _u.pathname + _u.search + _u.hash;
+              } catch (e) {
+                return u;
+              }
+            }
+            const currentClean = getCleanUrlWithoutScrollY(window.location.href);
+            const targetClean = getCleanUrlWithoutScrollY(url);
+            if (currentClean === targetClean) {
+              // 是同一页面，直接刷新并带上 scroll_y
+              panel.style.display = 'none'; // 跳转前先关闭面板
+              setTimeout(() => {
+                if (window.location.href !== url) {
+                  window.location.href = url;
+                } else {
+                  // 已经带 scroll_y，强制刷新
+                  window.location.reload();
+                }
+              }, 50);
+            } else {
+              panel.style.display = 'none';
+              setTimeout(() => {
+                window.open(url, '_blank');
+              }, 50);
+            }
           };
           // 删除按钮
           const delBtn = document.createElement('button');
@@ -259,15 +323,6 @@
   }
 
   // 保存/更新到 chrome.storage.sync 和 localStorage
-  const record = {
-    book_url_base,
-    book_title,
-    last_page_url: location.href,
-    last_page_title,
-    updated_at: Date.now()
-  };
-
-  // 双存储：chrome.storage.sync + localStorage
   function saveHistory(record) {
     // 1. chrome.storage.sync
     chrome.storage.sync.get({ reading_history: [] }, (result) => {
@@ -282,5 +337,35 @@
       } catch(e) {}
     });
   }
-  saveHistory(record);
+  function getCleanUrlWithoutScrollY(url) {
+    try {
+      const u = new URL(url);
+      u.searchParams.delete('scroll_y');
+      return u.origin + u.pathname + u.search + u.hash;
+    } catch (e) {
+      return url;
+    }
+  }
+
+  // 保存当前滚动位置
+  function saveHistoryWithCurrentScroll() {
+    const cleanUrl = getCleanUrlWithoutScrollY(location.href);
+    const record = {
+      book_url_base,
+      book_title,
+      last_page_url: cleanUrl,
+      last_page_title,
+      updated_at: Date.now(),
+      scroll_y: window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0
+    };
+    saveHistory(record);
+  }
+  // 初次保存
+  saveHistoryWithCurrentScroll();
+  // 滚动时实时保存
+  let scrollSaveTimer = null;
+  window.addEventListener('scroll', function() {
+    if (scrollSaveTimer) clearTimeout(scrollSaveTimer);
+    scrollSaveTimer = setTimeout(saveHistoryWithCurrentScroll, 800);
+  });
 })();
